@@ -8,7 +8,7 @@ import spread from 'cytoscape-spread';
 import 'react';
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
-import { MenuItem, DropdownButton, Button,ListGroup,ListGroupItem } from 'react-bootstrap';
+import { Dropdown, DropdownButton, Button,ButtonToolbar, ListGroup,ListGroupItem } from 'react-bootstrap';
 //import Plot from 'react-plotly.js';
 import Chart from 'react-apexcharts'
 import { Resizable, ResizableBox } from 'react-resizable';
@@ -267,7 +267,7 @@ class GeneNetItem extends Component {
         </ListGroupItem>)
         */
     } else if(this.state.state == 2) {
-      return (<ListGroupItem bsStyle="info" href={this.state.genenetwork.pathway.url} header={this.state.genenetwork.pathway.name}>{this.props.desc}<br/>p={this.props.p}</ListGroupItem>)
+      return (<ListGroupItem bsstyle="info" href={this.state.genenetwork.pathway.url} header={this.state.genenetwork.pathway.name}>{this.props.desc}<br/>p={this.props.p}</ListGroupItem>)
     }
   }
 }
@@ -392,6 +392,8 @@ class Viewer extends Component {
           <b>Tumour types, germline:</b> {c["Tumour.Types.Germline"]}<br/>
         </div>
       )
+    } else {
+      return (<span>&nbsp;</span>);
     }
   }
   relayout() {
@@ -542,14 +544,14 @@ class Viewer extends Component {
   }
   selectParameter1(e) {
     var p = this.state.parameters
-    p[0] = e
+    p[0] = e*1
     this.setState({parameters: p})
     this.updateGraph()
     this.forceUpdate()
   }
   selectParameter2(e) {
     var p = this.state.parameters
-    p[1] = e
+    p[1] = e*1
     this.setState({parameters: p})
     this.updateGraph()
     this.forceUpdate()
@@ -691,16 +693,16 @@ class Viewer extends Component {
     )}, this)
     var parameter1items = r.parameters.lambda1.map( 
       (lambda,i) => { 
-        return (<MenuItem onSelect={this.selectParameter1.bind(this)} key={`lambda1-${i}`} eventKey={i}>{lambda}</MenuItem>)
+        return (<Dropdown.Item onSelect={this.selectParameter1.bind(this)} key={`lambda1-${i}`} eventKey={i}>{lambda}</Dropdown.Item>)
       })
     var parameter2items = r.parameters.lambda2.map( 
       (lambda,i) => { 
-        return (<MenuItem onSelect={this.selectParameter2.bind(this)} key={`lambda2-${i}`} eventKey={i}>{lambda}</MenuItem>)
+        return (<Dropdown.Item onSelect={this.selectParameter2.bind(this)} key={`lambda2-${i}`} eventKey={i}>{lambda}</Dropdown.Item>)
       })
     var parametermenus = (
-      <span>
+      <ButtonToolbar>
       <DropdownButton
-        bsStyle="default"
+        bsstyle="default"
         title={`LASSO penalty`}
         key="lambda1menu"
         id="lambda1menu"
@@ -708,14 +710,14 @@ class Viewer extends Component {
        {parameter1items}
        </DropdownButton>
       <DropdownButton
-        bsStyle="default"
+        bsstyle="default"
         title={`Fused penalty`}
         key="lambda2menu"
         id="lambda2menu"
        >
        {parameter2items}
        </DropdownButton>
-      </span>
+      </ButtonToolbar>
     )
     var edgeMenu = "";
     var genecard = ""
@@ -723,7 +725,7 @@ class Viewer extends Component {
       var sym = this.state.node.id()
       edgeMenu = this.state.node.connectedEdges().map( (e,i) => {
         var x = e.data('x')
-        return (<MenuItem onSelect={this.selectEdge} key={`neigh-${e.id()}`} eventKey={`${e.id()}`}>{e.id()} w={x}</MenuItem>)
+        return (<Dropdown.Item onSelect={this.selectEdge} key={`neigh-${e.id()}`} eventKey={`${e.id()}`}>{e.id()} w={x}</Dropdown.Item>)
       });
       var census = ""
       if(this.isCensus(this.state.node.id()))
@@ -738,17 +740,17 @@ class Viewer extends Component {
     var selected = (this.state && this.state.node) ? (
       <span>
       <DropdownButton
-        bsStyle="default"
+        bsstyle="default"
         title={`Actions for Species ${this.state.node.id()}`}
         key="speciesmenu"
         id="speciesmenu"
        >
-         <MenuItem onSelect={this.loadCOSMIC.bind(this)}>COSMIC</MenuItem>
-         <MenuItem onSelect={this.loadGeneCard.bind(this)}>Genecard</MenuItem>
-         <MenuItem onSelect={this.loadNCBI.bind(this)}>NCBI</MenuItem>
+         <Dropdown.Item onSelect={this.loadCOSMIC.bind(this)}>COSMIC</Dropdown.Item>
+         <Dropdown.Item onSelect={this.loadGeneCard.bind(this)}>Genecard</Dropdown.Item>
+         <Dropdown.Item onSelect={this.loadNCBI.bind(this)}>NCBI</Dropdown.Item>
        </DropdownButton>
       <DropdownButton
-        bsStyle="default"
+        bsstyle="default"
         title={`Edges of Species ${this.state.node.id()}`}
         key="speciesEdges"
         id="speciesEdges"
@@ -847,17 +849,17 @@ class Viewer extends Component {
         <Button onClick={this.saveGraph.bind(this)}>Download Graph</Button><br/>
         <Button onClick={this.fitGraph.bind(this)}>Fit Graph</Button><br/>
         <DropdownButton
-          bsStyle="default"
+          bsstyle="default"
           title="Change Layout"
           key="layoutmenu"
           id="layoutmenu"
          >
-          <MenuItem onSelect={this.changeLayout.bind(this)} eventKey="cose">Cose</MenuItem>
-          <MenuItem onSelect={this.changeLayout.bind(this)} eventKey="cola">Cola</MenuItem>
-          <MenuItem onSelect={this.changeLayout.bind(this)} eventKey="dagre">Dagre</MenuItem>
-          <MenuItem onSelect={this.changeLayout.bind(this)} eventKey="spread">Spread</MenuItem>
-          <MenuItem onSelect={this.changeLayout.bind(this)} eventKey="concentric">Concentric</MenuItem>
-          <MenuItem onSelect={this.changeLayout.bind(this)} eventKey="breadthfirst">Breadth First</MenuItem>
+          <Dropdown.Item onSelect={this.changeLayout.bind(this)} eventKey="cose">Cose</Dropdown.Item>
+          <Dropdown.Item onSelect={this.changeLayout.bind(this)} eventKey="cola">Cola</Dropdown.Item>
+          <Dropdown.Item onSelect={this.changeLayout.bind(this)} eventKey="dagre">Dagre</Dropdown.Item>
+          <Dropdown.Item onSelect={this.changeLayout.bind(this)} eventKey="spread">Spread</Dropdown.Item>
+          <Dropdown.Item onSelect={this.changeLayout.bind(this)} eventKey="concentric">Concentric</Dropdown.Item>
+          <Dropdown.Item onSelect={this.changeLayout.bind(this)} eventKey="breadthfirst">Breadth First</Dropdown.Item>
         </DropdownButton>
         <Button onClick={this.relayout.bind(this)}>Re-layout</Button>
         <br/>
