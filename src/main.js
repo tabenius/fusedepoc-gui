@@ -14,7 +14,7 @@ import Chart from 'react-apexcharts'
 import { Resizable, ResizableBox } from 'react-resizable';
 import { saveAs } from 'file-saver';
 
-import netdata from './result.epocsel.cv.js'
+import netdata from './results.js'
 import census from './census.js'
 
 var cy = null; //UGLY!

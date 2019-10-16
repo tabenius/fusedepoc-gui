@@ -7,7 +7,7 @@ npm install \
   file-saver \
   browserify \
   react react-dom react-bootstrap \
-  react-resizeable \
+  react-resizable \
   cytoscape \
   cytoscape-dagre cytoscape-cola cytoscape-spread \
   react-cytoscapejs \
