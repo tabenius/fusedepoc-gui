@@ -339,7 +339,7 @@ class Genenetwork extends Component {
     }
   }
 }
-var edgecolors = ["red","blue","green","yellow"]
+var edgecolors = ["red","green","blue","yellow"]
 class Viewer extends Component {
   constructor(props) {
     super(props)
