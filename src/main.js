@@ -891,7 +891,7 @@ class Loader extends Component {
   }
   download (url) {
     this.setState( { message: "Downloading..." } )
-    fetch(this.state.URL).then((response) => {
+    fetch(this.state.URL, {credentials: "same-origin", mode: "cors"}).then((response) => {
       if (!response.ok) {
 	alert("Couldn't download result data");
 	this.setState( { message: null })
