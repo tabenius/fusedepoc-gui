@@ -8,13 +8,12 @@ import spread from 'cytoscape-spread';
 import 'react';
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
-import { Dropdown, DropdownButton, Button,ButtonToolbar, ListGroup,ListGroupItem } from 'react-bootstrap';
+import { Dropdown, DropdownButton, Button,ButtonToolbar, ListGroup,ListGroupItem, Form} from 'react-bootstrap';
 //import Plot from 'react-plotly.js';
 import Chart from 'react-apexcharts'
 import { Resizable, ResizableBox } from 'react-resizable';
 import { saveAs } from 'file-saver';
 
-import netdata from './results.js'
 import census from './census.js'
 
 var cy = null; //UGLY!
@@ -102,7 +101,7 @@ class Heatmap extends Component {
   }
   generateSeriesOld() {
     this.log("Generating new series")
-    var r = netdata
+    var r = this.props.netdata
     if (r.sparse) {
       this.log("Can't generate series from sparse data yet")
       return;
@@ -140,7 +139,7 @@ class Heatmap extends Component {
     }
     var lambda1ix = this.props.parameters[0]
     var lambda2ix = this.props.parameters[1]
-    var r = netdata
+    var r = this.props.netdata
     if (r.sparse) {
       this.log("Can't generate series from sparse data yet")
       return;
@@ -573,7 +572,7 @@ class Viewer extends Component {
       this.selectNode(node);
     }.bind(this));
 
-    var r = netdata
+    var r = this.props.netdata
     var nodes = r.species.map( (x,i) => { return ({ data: {id: x, ix: i } }); });
     this.cy.add(nodes)
     var lambda1ix = this.state.parameters[0]
@@ -679,7 +678,10 @@ class Viewer extends Component {
     window.open(url, '_blank')
   }
   render() {
-    var r = netdata
+    var r = this.props.netdata
+    if (!r) {
+      return (<span>Network data not loaded yet</span>);
+    }
     var nets = r.descriptions.map( (netname,i) => { return (
       <span>
         <label style={ {color: "white", backgroundColor: edgecolors[i] } } >
@@ -866,14 +868,71 @@ class Viewer extends Component {
         {selected}<br/>
         <div className="genecard" >{genecard}</div>
       </div>
+</div>
+    );
+    /*
       <div id="heatmap">
-        <Heatmap parameters={[this.state.parameters[0],this.state.parameters[1]]} cy={this.cy} updated={this.state.updated} log={this.log}/><br/>
+        <Heatmap parameters={[this.state.parameters[0],this.state.parameters[1]]} cy={this.cy} updated={this.state.updated} log={this.log} netdata={this.props.netdata}/><br/>
       </div>
 </div>
     );
+*/
 
   }
 }
+class Loader extends Component {
+  constructor(props) {
+    super(props)
+    if (netdata) {
+      this.state = { URL: null, netdata: netdata }
+    } else {
+      this.state = { URL: null }
+    }
+  }
+  download (url) {
+    this.setState( { message: "Downloading..." } )
+    fetch(this.state.URL).then((response) => {
+      if (!response.ok) {
+	alert("Couldn't download result data");
+	this.setState( { message: null })
+      }
+      return(response.json())
+    })
+    .then((json) => {
+      this.setState({ netdata: json, message: null })
+    })
+    return false
+  }
+  handleChange(ev) {
+    console.log(ev.target.value)
+    this.setState( { URL: ev.target.value })
+  }
+  render () {
+    if (this.state.message) {
+      return (
+	<div>
+	{this.state.message}
+	</div>
+      )
+    }
+    else if (this.state.netdata) {
+      return (
+	<div>
+	<Viewer netdata={this.state.netdata} />
+	</div>
+      )
+    } else {
+      return (<Form>
+	<Form.Group controlId="formURL">
+	<Form.Label>URL of data</Form.Label>
+	<Form.Control type="url" placeholder="enter URL" onChange={this.handleChange.bind(this)} />
+	</Form.Group>
+	<Button variant="primary" type="button" onClick={this.download.bind(this)}>Submit</Button>
+	</Form>
+      )
+    }
+  }
+}
 
-ReactDOM.render( <Viewer />, document.getElementById('react'));
+ReactDOM.render( <Loader />, document.getElementById('react'));
 
