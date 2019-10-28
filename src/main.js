@@ -901,6 +901,9 @@ class Loader extends Component {
     .then((json) => {
       this.setState({ netdata: json, message: null })
     })
+    .catch(function() {
+      this.setState( {message: "Download error..."} )
+    })
     return false
   }
   handleChange(ev) {
