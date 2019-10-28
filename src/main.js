@@ -883,7 +883,7 @@ class Viewer extends Component {
 class Loader extends Component {
   constructor(props) {
     super(props)
-    if (netdata) {
+    if (typeof netdata !== 'undefined') {
       this.state = { URL: null, netdata: netdata }
     } else {
       this.state = { URL: null }
