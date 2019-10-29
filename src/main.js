@@ -886,36 +886,41 @@ class Loader extends Component {
     if (typeof netdata !== 'undefined') {
       this.state = { URL: null, netdata: netdata }
     } else {
-      this.state = { URL: null }
+      this.state = { URL: 'static/js/results.js' }
     }
   }
-  download (url) {
-    this.setState( { message: "Downloading..." } )
-    fetch(this.state.URL, {credentials: "same-origin", mode: "cors"}).then((response) => {
+  UNSAFE_componentWillMount() {
+    if (this.state.URL)
+      this.download(null, true)
+  }
+  download (ev, nofail) {
+    console.log("nofail: "+nofail)
+    this.setState( { message: "Loading "+this.state.URL+"..." } )
+    fetch(this.state.URL, {mode: "cors"}).then((response) => {
       if (!response.ok) {
-        alert("Couldn't download result data");
+        if(!nofail) alert("Download failure");
         this.setState( { message: null })
       }
       return(response.json())
     })
+    .catch( () => {
+      this.setState( {message: "Download error..."} )
+      if(!nofail) alert("Couldn't load result data");
+    })
     .then((json) => {
       this.setState({ netdata: json, message: null })
-    })
-    .catch(function() {
-      this.setState( {message: "Download error..."} )
     })
     return false
   }
   handleChange(ev) {
-    console.log(ev.target.value)
     this.setState( { URL: ev.target.value })
   }
   render () {
     if (this.state.message) {
       return (
-	<div>
-	{this.state.message}
-	</div>
+        <div>
+        {this.state.message}
+        </div>
       )
     }
     else if (this.state.netdata) {
@@ -927,14 +932,11 @@ class Loader extends Component {
     } else {
       return (
       <div>
-      <p>
         This GUI instance found no built-in data. Please supply your own data or try 
         using (copy and paste data URL to field below)
         <ul>
-        <li>the female cancers example result from http://epoc.med.gu.se/femalecancers.js</li>
         <li>the example result from <a href="http://github.com/tabenius/fusedepoc">the guide</a> at https://jsonstorage.net/api/items/f32e3ccf-a96d-44b5-86b8-ef923cc32e41</li>
         </ul>
-        </p>
         <Form>
         <Form.Group controlId="formURL">
         <Form.Label>URL of data</Form.Label>
