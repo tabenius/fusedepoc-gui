@@ -936,6 +936,7 @@ class Loader extends Component {
         using (copy and paste data URL to field below)
         <ul>
         <li>the example result from <a href="http://github.com/tabenius/fusedepoc">the guide</a> at https://jsonstorage.net/api/items/f32e3ccf-a96d-44b5-86b8-ef923cc32e41</li>
+	<li>The female cancers data set (upcoming paper): https://jsonblob.com/api/jsonBlob/93bbcef5-fa4f-11e9-a508-6fbd7347a169</li>
         </ul>
         <Form>
         <Form.Group controlId="formURL">
